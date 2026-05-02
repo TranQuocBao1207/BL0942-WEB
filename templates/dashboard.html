@@ -1,0 +1,258 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<style>
+body { margin: 0; font-family: Arial; }
+
+.header {
+    background: #2c2f8f;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.logo { height: 40px; }
+
+.logout {
+    color: white;
+    text-decoration: none;
+    background: red;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.container { display: flex; }
+
+.sidebar {
+    width: 260px;
+    background: #1e1f3a;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+}
+
+.device {
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.device:hover { background: #3a3fbf; }
+.active { background: #4c51bf; }
+
+.device a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.delete-btn {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 6px 12px;
+    background: red;
+    color: white;
+    border-radius: 6px;
+}
+
+.add-box {
+    margin-top: 25px;
+    padding: 15px;
+    background: #2a2c55;
+    border-radius: 10px;
+}
+
+.add-box input {
+    width: 93%;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 5px;
+    border: none;
+}
+
+.add-box button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background: #4c51bf;
+    color: white;
+    border: none;
+}
+
+.content {
+    flex: 1;
+    padding: 30px;
+    background: #f2f2f2;
+}
+
+.cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 180px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #2c2f8f;
+}
+
+.no-data { color: gray; font-size: 14px; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <img src="{% static 'images/logo.png' %}" class="logo">
+        <span>HỆ THỐNG GIÁM SÁT ĐIỆN NĂNG</span>
+    </div>
+
+    <a href="/logout/" class="logout">Đăng xuất</a>
+</div>
+
+<div class="container">
+
+<div class="sidebar">
+    <h3>Thiết bị</h3>
+
+    {% for d in devices %}
+    <div class="device {% if selected_device and d.id == selected_device.id %}active{% endif %}">
+        <a href="/dashboard/?device={{ d.id }}">
+            <strong>{{ d.name }}</strong><br>
+            <small>ID: {{ d.device_id }}</small>
+        </a>
+
+        <a class="delete-btn"
+           href="/delete-device/{{ d.id }}/"
+           onclick="return confirm('Bạn có chắc muốn xóa thiết bị này không?')">
+           Xóa
+        </a>
+    </div>
+    {% endfor %}
+
+    <div class="add-box">
+        <h4>Thêm thiết bị</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="Tên thiết bị" required>
+            <input type="text" name="device_id" placeholder="Device ID" required>
+            <button>+ Thêm thiết bị</button>
+        </form>
+    </div>
+</div>
+
+<div class="content">
+
+{% if selected_device %}
+<h2>{{ selected_device.name }}</h2>
+
+<div class="cards">
+
+<div class="card">
+    Điện áp
+    <div class="value" id="voltage">--</div>
+</div>
+
+<div class="card">
+    Dòng điện
+    <div class="value" id="current">--</div>
+</div>
+
+<div class="card">
+    Công suất
+    <div class="value" id="power">--</div>
+</div>
+
+<div class="card">
+    Điện năng
+    <div class="value" id="energy">--</div>
+</div>
+
+</div>
+
+<p class="no-data" id="status">Đang chờ dữ liệu...</p>
+
+{% else %}
+<h3>Chưa có thiết bị</h3>
+{% endif %}
+
+</div>
+</div>
+
+<!-- 🔥 REALTIME SCRIPT -->
+<script>
+const deviceId = "{{ selected_device.device_id|default:'' }}";
+
+function formatNumber(value, digits = 2) {
+    return Number(value).toFixed(digits);
+}
+
+function loadData() {
+    if (!deviceId) return;
+
+    fetch(`/api/latest-data/?device_id=${deviceId}&t=${Date.now()}`)
+    .then(res => {
+        if (!res.ok) throw new Error("HTTP error");
+        return res.json();
+    })
+    .then(data => {
+        if (data.status === "ok") {
+            document.getElementById("voltage").innerText = formatNumber(data.voltage,1) + " V";
+            document.getElementById("current").innerText = formatNumber(data.current,3) + " A";
+            document.getElementById("power").innerText = formatNumber(data.power,2) + " W";
+            document.getElementById("energy").innerText = formatNumber(data.energy,3) + " kWh";
+
+            document.getElementById("status").innerText = "Đang cập nhật...";
+        } else {
+            resetUI("Chưa có dữ liệu...");
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        resetUI("Mất kết nối server!");
+    });
+}
+
+function resetUI(message) {
+    document.getElementById("voltage").innerText = "--";
+    document.getElementById("current").innerText = "--";
+    document.getElementById("power").innerText = "--";
+    document.getElementById("energy").innerText = "--";
+    document.getElementById("status").innerText = message;
+}
+
+// gọi mỗi 2s
+setInterval(loadData, 2000);
+
+// gọi ngay
+loadData();
+</script>
+
+</body>
+</html>

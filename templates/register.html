@@ -1,0 +1,133 @@
+{% load static %}
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đăng ký</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial;
+    background-color: #f2f2f2;
+    margin: 0;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: #2c2f8f;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.logo {
+    height: 40px;
+}
+
+/* ===== FORM ===== */
+.container {
+    width: 400px;
+    margin: 80px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    color: #b00020;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    width: 100%;
+    background-color: #2c2f8f;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1f226b;
+}
+
+.login {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.login a {
+    text-decoration: none;
+    color: #2c2f8f;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header-left">
+        <img src="{% static 'images/logo.png' %}" class="logo">
+        <span>HỆ THỐNG GIÁM SÁT ĐIỆN NĂNG</span>
+    </div>
+</div>
+
+<!-- REGISTER FORM -->
+<div class="container">
+    <h2>ĐĂNG KÝ</h2>
+
+    {% if error %}
+    <p style="color: red; text-align:center;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Tên tài khoản</label>
+        <input type="text" name="username" required>
+
+        <label>Mật khẩu</label>
+        <input type="password" name="password" required>
+
+        <label>Nhập lại mật khẩu</label>
+        <input type="password" name="confirm_password" required>
+
+        <button type="submit">Đăng ký</button>
+    </form>
+
+    <div class="login">
+        <a href="/">Đã có tài khoản? Đăng nhập</a>
+    </div>
+</div>
+
+</body>
+</html>
