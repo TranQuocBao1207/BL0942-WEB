@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zd=qpx^wr8=98zt47!xo+qtbrbu^qw+w45pv0hh8s3)^e5&-3s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.2.102']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -115,9 +115,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
 import os
 
+STATIC_URL = '/static/'
+
+# thư mục static bạn tự tạo (dev)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+# 🔥 QUAN TRỌNG: dùng khi deploy
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
