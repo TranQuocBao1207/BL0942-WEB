@@ -1,9 +1,10 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from monitor import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('monitor.urls')),
 
     path('', views.login_view),
     path('register/', views.register),

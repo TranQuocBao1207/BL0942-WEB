@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
-
+import requests
 from .models import Device, ElectricalData
 
 
@@ -166,3 +166,21 @@ def latest_data(request):
 
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
+
+
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/XXXX/exec"
+
+@csrf_exempt
+def receive_data(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+
+            # gửi sang Google Sheet
+            requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=3)
+
+            return JsonResponse({"status": "ok"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "msg": str(e)})
+
+    return JsonResponse({"status": "invalid"})
