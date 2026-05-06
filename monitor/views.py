@@ -12,7 +12,7 @@ from .models import Device, ElectricalData
 
 
 # ===== GOOGLE SHEET =====
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpIUayW9x3BWdwobmAapRE86UG-pxIYBhmQ4GECuoQsENJdeKc6ne2pKo5WZlaFR5V/exec"
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpplGHbOVB-bWSGARAdzfYKfPyTeXQ13WTNj3oTTMJHmQ0oFuuizdlq-QtNVN5XQhm/exec"
 
 
 # ===== LOGIN =====
