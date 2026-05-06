@@ -4,9 +4,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
 import json
 import requests
+
 from .models import Device, ElectricalData
+
+
+# ===== GOOGLE SHEET =====
+GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpIUayW9x3BWdwobmAapRE86UG-pxIYBhmQ4GECuoQsENJdeKc6ne2pKo5WZlaFR5V/exec"
 
 
 # ===== LOGIN =====
@@ -63,7 +69,7 @@ def dashboard(request):
     user = request.user
     devices = Device.objects.filter(user=user)
 
-    # THÊM THIẾT BỊ
+    # thêm thiết bị
     if request.method == "POST":
         name = request.POST.get("name")
         device_id = request.POST.get("device_id")
@@ -76,7 +82,6 @@ def dashboard(request):
             )
             return redirect(f"/dashboard/?device={new_device.id}")
 
-    # CHỌN THIẾT BỊ
     selected_device = None
     device_param = request.GET.get("device")
 
@@ -115,11 +120,12 @@ def receive_data(request):
             if not device_id:
                 return JsonResponse({"status": "error", "message": "missing device_id"})
 
-            # 🔥 FIX: không crash nếu device không tồn tại
+            # tìm device
             device = Device.objects.filter(device_id=device_id).first()
             if not device:
                 return JsonResponse({"status": "error", "message": "device not found"})
 
+            # ===== LƯU DB =====
             ElectricalData.objects.create(
                 device=device,
                 voltage=body.get("voltage", 0),
@@ -128,12 +134,22 @@ def receive_data(request):
                 energy=body.get("energy", 0)
             )
 
+            # ===== GỬI GOOGLE SHEET =====
+            try:
+                requests.post(
+                    GOOGLE_SCRIPT_URL,
+                    json=body,
+                    timeout=2
+                )
+            except Exception as e:
+                print("Sheet error:", e)  # chỉ log, không crash
+
             return JsonResponse({"status": "ok"})
 
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)})
 
-    return JsonResponse({"status": "error", "message": "invalid request"})
+    return JsonResponse({"status": "invalid request"})
 
 
 # ===== API LẤY DATA REALTIME =====
@@ -166,21 +182,3 @@ def latest_data(request):
 
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
-
-
-GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/XXXX/exec"
-
-@csrf_exempt
-def receive_data(request):
-    if request.method == "POST":
-        try:
-            data = json.loads(request.body)
-
-            # gửi sang Google Sheet
-            requests.post(GOOGLE_SCRIPT_URL, json=data, timeout=3)
-
-            return JsonResponse({"status": "ok"})
-        except Exception as e:
-            return JsonResponse({"status": "error", "msg": str(e)})
-
-    return JsonResponse({"status": "invalid"})
