@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json
 import requests
+import re
 
 from .models import Device, ElectricalData
 
@@ -182,3 +183,75 @@ def latest_data(request):
 
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)})
+    
+
+def energy_chart_data(request):
+
+    SHEET_ID = "ID_GOOGLE_SHEET_CỦA_BẠN"
+
+    url = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:json"
+
+    try:
+        response = requests.get(url)
+
+        text = response.text
+
+        json_text = re.search(r'google\.visualization\.Query\.setResponse\((.*)\);', text).group(1)
+
+        import json
+
+        data = json.loads(json_text)
+
+        sheets = data['table']['rows']
+
+        labels = []
+        values = []
+
+        # đọc từng sheet theo ngày
+        ss_url = f"https://spreadsheets.google.com/feeds/worksheets/{SHEET_ID}/public/full?alt=json"
+
+        ws = requests.get(ss_url).json()
+
+        entries = ws['feed']['entry']
+
+        for entry in entries:
+
+            title = entry['title']['$t']
+
+            # chỉ đọc sheet dạng yyyy-mm-dd
+            if re.match(r'^\\d{4}-\\d{2}-\\d{2}$', title):
+
+                try:
+                    csv_url = f"https://docs.google.com/spreadsheets/d/1uju0s2W0iwLlfkBM2eHt-RS9TvsRAbrij437THnmI_8/gviz/tq?tqx=out:csv&sheet={title}"
+
+                    csv_data = requests.get(csv_url).text
+
+                    rows = csv_data.splitlines()
+
+                    total = 0
+
+                    if len(rows) > 1:
+
+                        last = rows[-1].split(',')
+
+                        # cột Total kWh = cột 8
+                        total = float(last[7])
+
+                    labels.append(title)
+                    values.append(round(total, 3))
+
+                except:
+                    pass
+
+        return JsonResponse({
+            "labels": labels,
+            "values": values
+        })
+
+    except Exception as e:
+
+        return JsonResponse({
+            "labels": [],
+            "values": [],
+            "error": str(e)
+        })
