@@ -526,11 +526,17 @@
 
           const data = await response.json();
 
+          const deviceId = "{{ selected_device.device_id }}";
+
+          const monthlyTotal = Number(data.monthly_total?.[deviceId] || 0);
+
+          const monthlyCost = Number(data.monthly_cost?.[deviceId] || 0);
+
           document.getElementById("monthEnergy").innerText =
-            Number(data.monthly_total).toFixed(3) + " kWh";
+            monthlyTotal.toFixed(3) + " kWh";
 
           document.getElementById("monthCost").innerText =
-            Number(data.monthly_cost).toLocaleString("vi-VN") + " VNĐ";
+            monthlyCost.toLocaleString("vi-VN") + " VNĐ";
 
           const ctx = document.getElementById("energyChart");
 
