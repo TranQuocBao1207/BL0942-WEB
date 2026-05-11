@@ -263,6 +263,38 @@
 
         color: #2c2f8f;
       }
+
+      .chart-detail-box {
+        margin-top: 20px;
+
+        text-align: center;
+      }
+
+      .detail-btn {
+        display: inline-block;
+
+        text-decoration: none;
+
+        background: #2c2f8f;
+
+        color: white;
+
+        padding: 12px 22px;
+
+        border-radius: 10px;
+
+        font-size: 15px;
+
+        font-weight: bold;
+
+        transition: 0.2s;
+      }
+
+      .detail-btn:hover {
+        background: #4c51bf;
+
+        transform: translateY(-2px);
+      }
     </style>
   </head>
 
@@ -388,6 +420,16 @@
           <h3>Điện năng theo ngày</h3>
 
           <canvas id="energyChart"></canvas>
+
+          <div class="chart-detail-box">
+            <a
+              href="https://docs.google.com/spreadsheets/d/1uju0s2W0iwLlfkBM2eHt-RS9TvsRAbrij437THnmI_8/edit?usp=sharing"
+              target="_blank"
+              class="detail-btn"
+            >
+              Xem chi tiết
+            </a>
+          </div>
         </div>
 
         {% else %}
