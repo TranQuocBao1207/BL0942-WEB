@@ -289,38 +289,34 @@ def latest_data(request):
 
 def energy_chart_data(request):
 
+    device_id = request.GET.get("device_id")
+
+    if not device_id:
+
+        return JsonResponse({
+            "labels": [],
+            "values": []
+        })
+
     try:
 
         response = requests.get(
-            GOOGLE_SCRIPT_URL,
+            GOOGLE_SCRIPT_URL + "?device_id=" + device_id,
             timeout=5
         )
 
-        data = response.json()
+        sheet_data = response.json()
 
         labels = []
         values = []
 
-        monthly_total = 0
-        monthly_cost = 0
+        # ===== DỮ LIỆU BIỂU ĐỒ =====
 
-        for item in data:
+        for item in sheet_data["data"]:
 
             labels.append(item["date"])
 
-            values.append(
-                round(float(item["total"]), 3)
-            )
-
-            monthly_total = item.get(
-                "monthly_total",
-                0
-            )
-
-            monthly_cost = item.get(
-                "monthly_cost",
-                0
-            )
+            values.append(item["total"])
 
         return JsonResponse({
 
@@ -328,9 +324,11 @@ def energy_chart_data(request):
 
             "values": values,
 
-            "monthly_total": monthly_total,
+            "monthly_total":
+                sheet_data["monthly_total"],
 
-            "monthly_cost": monthly_cost
+            "monthly_cost":
+                sheet_data["monthly_cost"]
         })
 
     except Exception as e:
