@@ -301,6 +301,9 @@ def energy_chart_data(request):
         labels = []
         values = []
 
+        monthly_total = 0
+        monthly_cost = 0
+
         for item in data:
 
             labels.append(item["date"])
@@ -309,15 +312,38 @@ def energy_chart_data(request):
                 round(float(item["total"]), 3)
             )
 
+            monthly_total = item.get(
+                "monthly_total",
+                0
+            )
+
+            monthly_cost = item.get(
+                "monthly_cost",
+                0
+            )
+
         return JsonResponse({
+
             "labels": labels,
-            "values": values
+
+            "values": values,
+
+            "monthly_total": monthly_total,
+
+            "monthly_cost": monthly_cost
         })
 
     except Exception as e:
 
         return JsonResponse({
+
             "labels": [],
+
             "values": [],
+
+            "monthly_total": 0,
+
+            "monthly_cost": 0,
+
             "error": str(e)
         })

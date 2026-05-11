@@ -1,555 +1,575 @@
 {% load static %}
 <!doctype html>
 <html lang="vi">
-<head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial;
+        background: #f2f2f2;
+      }
 
-body{
-    margin:0;
-    font-family:Arial;
-    background:#f2f2f2;
-}
+      /* ===== HEADER ===== */
 
-/* ===== HEADER ===== */
+      .header {
+        background: #2c2f8f;
+        color: white;
+        padding: 15px 20px;
 
-.header{
-    background:#2c2f8f;
-    color:white;
-    padding:15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
 
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
+        font-size: 20px;
+        font-weight: bold;
+      }
 
-    font-size:20px;
-    font-weight:bold;
-}
+      .logo {
+        height: 40px;
+      }
 
-.logo{
-    height:40px;
-}
+      .logout {
+        color: white;
+        text-decoration: none;
 
-.logout{
-    color:white;
-    text-decoration:none;
+        background: red;
+        padding: 8px 15px;
+        border-radius: 5px;
+      }
 
-    background:red;
-    padding:8px 15px;
-    border-radius:5px;
-}
+      /* ===== LAYOUT ===== */
 
-/* ===== LAYOUT ===== */
+      .container {
+        display: flex;
+      }
 
-.container{
-    display:flex;
-}
+      /* ===== SIDEBAR ===== */
 
-/* ===== SIDEBAR ===== */
+      .sidebar {
+        width: 260px;
+        background: #1e1f3a;
+        color: white;
 
-.sidebar{
-    width:260px;
-    background:#1e1f3a;
-    color:white;
+        padding: 20px;
+        min-height: 100vh;
+      }
 
-    padding:20px;
-    min-height:100vh;
-}
+      .device {
+        padding: 12px;
+        margin-bottom: 10px;
 
-.device{
-    padding:12px;
-    margin-bottom:10px;
+        border-radius: 10px;
 
-    border-radius:10px;
+        transition: 0.25s;
+        cursor: pointer;
+      }
 
-    transition:0.25s;
-    cursor:pointer;
-}
+      .device:hover {
+        background: #3a3fbf;
+        transform: translateY(-2px);
+      }
 
-.device:hover{
-    background:#3a3fbf;
-    transform:translateY(-2px);
-}
+      .active {
+        background: #4c51bf;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+      }
 
-.active{
-    background:#4c51bf;
-    box-shadow:0 0 10px rgba(255,255,255,0.15);
-}
+      .device a {
+        color: white;
+        text-decoration: none;
+        display: block;
+      }
 
-.device a{
-    color:white;
-    text-decoration:none;
-    display:block;
-}
+      .delete-btn {
+        display: inline-block;
 
-.delete-btn{
-    display:inline-block;
+        margin-top: 8px;
+        padding: 6px 12px;
 
-    margin-top:8px;
-    padding:6px 12px;
+        background: red;
+        color: white;
 
-    background:red;
-    color:white;
+        border-radius: 6px;
+      }
 
-    border-radius:6px;
-}
+      /* ===== ADD DEVICE ===== */
 
-/* ===== ADD DEVICE ===== */
+      .add-box {
+        margin-top: 10px;
+        padding: 10px;
 
-.add-box{
-    margin-top:10px;
-    padding:10px;
+        background: #2a2c55;
+        border-radius: 10px;
+      }
 
-    background:#2a2c55;
-    border-radius:10px;
-}
+      .add-box input {
+        width: 92%;
 
-.add-box input{
-    width:92%;
+        padding: 10px;
+        margin-top: 8px;
 
-    padding:10px;
-    margin-top:8px;
+        border-radius: 5px;
+        border: none;
+      }
 
-    border-radius:5px;
-    border:none;
-}
+      .add-box button {
+        width: 100%;
 
-.add-box button{
-    width:100%;
+        margin-top: 10px;
+        padding: 10px;
 
-    margin-top:10px;
-    padding:10px;
+        background: #4c51bf;
+        color: white;
 
-    background:#4c51bf;
-    color:white;
+        border: none;
+        border-radius: 5px;
 
-    border:none;
-    border-radius:5px;
+        cursor: pointer;
+      }
 
-    cursor:pointer;
-}
+      /* ===== CONTENT ===== */
 
-/* ===== CONTENT ===== */
+      .content {
+        flex: 1;
+        padding: 30px;
+      }
 
-.content{
-    flex:1;
-    padding:30px;
-}
+      /* ===== CARDS ===== */
 
-/* ===== CARDS ===== */
+      .cards {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
 
-.cards{
-    display:flex;
-    gap:20px;
-    flex-wrap:wrap;
-}
+      .card {
+        width: 180px;
 
-.card{
-    width:180px;
+        background: white;
+        padding: 20px;
 
-    background:white;
-    padding:20px;
+        border-radius: 14px;
+        text-align: center;
 
-    border-radius:14px;
-    text-align:center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+        transition: 0.2s;
+      }
 
-    transition:0.2s;
-}
+      .card:hover {
+        transform: translateY(-3px);
+      }
 
-.card:hover{
-    transform:translateY(-3px);
-}
+      .value {
+        margin-top: 8px;
 
-.value{
-    margin-top:8px;
+        font-size: 22px;
+        font-weight: bold;
 
-    font-size:22px;
-    font-weight:bold;
+        color: #2c2f8f;
+      }
 
-    color:#2c2f8f;
-}
+      .no-data {
+        color: gray;
+        font-size: 14px;
+        margin-top: 15px;
+      }
 
-.no-data{
-    color:gray;
-    font-size:14px;
-    margin-top:15px;
-}
+      /* ===== CHART ===== */
 
-/* ===== CHART ===== */
+      .energy-chart-box {
+        margin-top: 35px;
 
-.energy-chart-box{
+        background: white;
 
-    margin-top:35px;
+        padding: 20px;
 
-    background:white;
+        border-radius: 16px;
 
-    padding:20px;
+        width: 95%;
+        max-width: 1100px;
 
-    border-radius:16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+      }
 
-    width:95%;
-    max-width:1100px;
+      .energy-chart-box h3 {
+        margin-top: 0;
+        margin-bottom: 20px;
 
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
-}
+        color: #222;
+      }
 
-.energy-chart-box h3{
-    margin-top:0;
-    margin-bottom:20px;
+      #energyChart {
+        width: 100% !important;
+        height: 380px !important;
+      }
 
-    color:#222;
-}
+      /* ===== MONTH SUMMARY ===== */
 
-#energyChart{
-    width:100% !important;
-    height:380px !important;
-}
+      .month-summary {
+        display: flex;
 
-</style>
-</head>
+        gap: 25px;
 
-<body>
+        margin-top: 25px;
+        margin-bottom: 25px;
 
-<!-- ===== HEADER ===== -->
+        flex-wrap: wrap;
+      }
 
-<div class="header">
+      .month-card {
+        flex: 1;
 
-    <div class="header-left">
-        <img src="{% static 'images/logo.png' %}" class="logo">
+        min-width: 320px;
+
+        background: white;
+
+        padding: 28px;
+
+        border-radius: 18px;
+
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+        transition: 0.25s;
+      }
+
+      .month-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .month-title {
+        font-size: 18px;
+
+        color: #666;
+      }
+
+      .month-value {
+        margin-top: 12px;
+
+        font-size: 38px;
+
+        font-weight: bold;
+
+        color: #2c2f8f;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== HEADER ===== -->
+
+    <div class="header">
+      <div class="header-left">
+        <img src="{% static 'images/logo.png' %}" class="logo" />
         <span>HỆ THỐNG GIÁM SÁT ĐIỆN NĂNG</span>
+      </div>
+
+      <a href="/logout/" class="logout"> Đăng xuất </a>
     </div>
 
-    <a href="/logout/" class="logout">
-        Đăng xuất
-    </a>
+    <div class="container">
+      <!-- ===== SIDEBAR ===== -->
 
-</div>
+      <div class="sidebar">
+        <h3>Thiết bị</h3>
 
-<div class="container">
+        {% for d in devices %}
 
-<!-- ===== SIDEBAR ===== -->
-
-<div class="sidebar">
-
-    <h3>Thiết bị</h3>
-
-    {% for d in devices %}
-
-    <div class="device {% if selected_device and d.id == selected_device.id %}active{% endif %}">
-
-        <a href="/dashboard/?device={{ d.id }}">
-
-            <strong>{{ d.name }}</strong><br>
+        <div
+          class="device {% if selected_device and d.id == selected_device.id %}active{% endif %}"
+        >
+          <a href="/dashboard/?device={{ d.id }}">
+            <strong>{{ d.name }}</strong><br />
 
             <small>ID: {{ d.device_id }}</small>
+          </a>
 
-        </a>
+          <a
+            class="delete-btn"
+            href="/delete-device/{{ d.id }}/"
+            onclick="
+              return confirm('Bạn có chắc muốn xóa thiết bị này không?');
+            "
+          >
+            Xóa
+          </a>
+        </div>
 
-        <a class="delete-btn"
-           href="/delete-device/{{ d.id }}/"
-           onclick="return confirm('Bạn có chắc muốn xóa thiết bị này không?')">
+        {% endfor %}
 
-           Xóa
+        <!-- ===== ADD DEVICE ===== -->
 
-        </a>
+        <div class="add-box">
+          <h4 style="font-size: 21px; margin: 10px 0 10px 0">Thêm thiết bị</h4>
 
-    </div>
-
-    {% endfor %}
-
-    <!-- ===== ADD DEVICE ===== -->
-
-    <div class="add-box">
-
-        <h4 style="font-size:21px; margin: 10px 0 10px 0;">
-            Thêm thiết bị
-        </h4>
-
-        <form method="POST">
-
+          <form method="POST">
             {% csrf_token %}
 
-            <input type="text"
-                   name="name"
-                   placeholder="Tên thiết bị"
-                   required>
+            <input
+              type="text"
+              name="name"
+              placeholder="Tên thiết bị"
+              required
+            />
 
-            <input type="text"
-                   name="device_id"
-                   placeholder="Device ID"
-                   required>
+            <input
+              type="text"
+              name="device_id"
+              placeholder="Device ID"
+              required
+            />
 
             <button>+ Thêm thiết bị</button>
+          </form>
+        </div>
+      </div>
 
-        </form>
+      <!-- ===== CONTENT ===== -->
 
+      <div class="content">
+        {% if selected_device %}
+
+        <h2>{{ selected_device.name }}</h2>
+
+        <!-- ===== DATA CARDS ===== -->
+
+        <div class="cards">
+          <div class="card">
+            Điện áp
+            <div class="value" id="voltage">--</div>
+          </div>
+
+          <div class="card">
+            Dòng điện
+            <div class="value" id="current">--</div>
+          </div>
+
+          <div class="card">
+            Công suất
+            <div class="value" id="power">--</div>
+          </div>
+
+          <div class="card">
+            Điện năng
+            <div class="value" id="energy">--</div>
+          </div>
+        </div>
+
+        <p class="no-data" id="status">Đang chờ dữ liệu...</p>
+
+        <div class="month-summary">
+          <div class="month-card">
+            <div class="month-title">Tổng điện năng tháng</div>
+
+            <div class="month-value" id="monthEnergy">-- kWh</div>
+          </div>
+
+          <div class="month-card">
+            <div class="month-title">Tiền điện tháng</div>
+
+            <div class="month-value" id="monthCost">-- VNĐ</div>
+          </div>
+        </div>
+
+        <!-- ===== EVN CHART ===== -->
+
+        <div class="energy-chart-box">
+          <h3>Điện năng theo ngày</h3>
+
+          <canvas id="energyChart"></canvas>
+        </div>
+
+        {% else %}
+
+        <h3>Chưa có thiết bị</h3>
+
+        {% endif %}
+      </div>
     </div>
 
-</div>
+    <!-- ===== REALTIME SCRIPT ===== -->
 
-<!-- ===== CONTENT ===== -->
+    <script>
+      const deviceId = "{{ selected_device.device_id|default:'' }}";
 
-<div class="content">
+      /* ===== FORMAT NUMBER ===== */
 
-{% if selected_device %}
+      function formatNumber(value, digits = 2) {
+        return Number(value).toFixed(digits);
+      }
 
-<h2>{{ selected_device.name }}</h2>
+      /* ===== LOAD REALTIME DATA ===== */
 
-<!-- ===== DATA CARDS ===== -->
+      function loadData() {
+        if (!deviceId) return;
 
-<div class="cards">
+        fetch(`/api/latest-data/?device_id=${deviceId}&t=${Date.now()}`)
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error("HTTP ERROR");
+            }
 
-    <div class="card">
-        Điện áp
-        <div class="value" id="voltage">--</div>
-    </div>
+            return res.json();
+          })
 
-    <div class="card">
-        Dòng điện
-        <div class="value" id="current">--</div>
-    </div>
+          .then((data) => {
+            if (data.status === "ok") {
+              document.getElementById("voltage").innerText =
+                formatNumber(data.voltage, 1) + " V";
 
-    <div class="card">
-        Công suất
-        <div class="value" id="power">--</div>
-    </div>
+              document.getElementById("current").innerText =
+                formatNumber(data.current, 3) + " A";
 
-    <div class="card">
-        Điện năng
-        <div class="value" id="energy">--</div>
-    </div>
+              document.getElementById("power").innerText =
+                formatNumber(data.power, 2) + " W";
 
-</div>
+              document.getElementById("energy").innerText =
+                formatNumber(data.energy, 3) + " kWh";
 
-<p class="no-data" id="status">
-    Đang chờ dữ liệu...
-</p>
+              document.getElementById("status").innerText = "Đang cập nhật...";
+            } else {
+              resetUI("Chưa có dữ liệu...");
+            }
+          })
 
-<!-- ===== EVN CHART ===== -->
+          .catch((err) => {
+            console.log(err);
 
-<div class="energy-chart-box">
+            resetUI("Mất kết nối server!");
+          });
+      }
 
-    <h3>Điện năng theo ngày</h3>
+      /* ===== RESET UI ===== */
 
-    <canvas id="energyChart"></canvas>
+      function resetUI(message) {
+        document.getElementById("voltage").innerText = "--";
 
-</div>
+        document.getElementById("current").innerText = "--";
 
-{% else %}
+        document.getElementById("power").innerText = "--";
 
-<h3>Chưa có thiết bị</h3>
+        document.getElementById("energy").innerText = "--";
 
-{% endif %}
+        document.getElementById("status").innerText = message;
+      }
 
-</div>
-</div>
+      /* ===== LOAD EVERY SECOND ===== */
 
-<!-- ===== REALTIME SCRIPT ===== -->
+      setInterval(loadData, 1000);
 
-<script>
+      loadData();
 
-const deviceId = "{{ selected_device.device_id|default:'' }}";
+      /* ========================================================= */
+      /* ==================== EVN BAR CHART ====================== */
+      /* ========================================================= */
 
-/* ===== FORMAT NUMBER ===== */
+      let energyChart = null;
 
-function formatNumber(value, digits = 2){
-    return Number(value).toFixed(digits);
-}
+      /* ===== LOAD CHART ===== */
 
-/* ===== LOAD REALTIME DATA ===== */
+      async function loadEnergyChart() {
+        try {
+          const response = await fetch("/api/energy-chart/");
 
-function loadData(){
+          const data = await response.json();
 
-    if(!deviceId) return;
+          document.getElementById("monthEnergy").innerText =
+            Number(data.monthly_total).toFixed(3) + " kWh";
 
-    fetch(`/api/latest-data/?device_id=${deviceId}&t=${Date.now()}`)
+          document.getElementById("monthCost").innerText =
+            Number(data.monthly_cost).toLocaleString("vi-VN") + " VNĐ";
 
-    .then(res => {
+          const ctx = document.getElementById("energyChart");
 
-        if(!res.ok){
-            throw new Error("HTTP ERROR");
-        }
-
-        return res.json();
-    })
-
-    .then(data => {
-
-        if(data.status === "ok"){
-
-            document.getElementById("voltage").innerText =
-                formatNumber(data.voltage,1) + " V";
-
-            document.getElementById("current").innerText =
-                formatNumber(data.current,3) + " A";
-
-            document.getElementById("power").innerText =
-                formatNumber(data.power,2) + " W";
-
-            document.getElementById("energy").innerText =
-                formatNumber(data.energy,3) + " kWh";
-
-            document.getElementById("status").innerText =
-                "Đang cập nhật...";
-        }
-
-        else{
-
-            resetUI("Chưa có dữ liệu...");
-        }
-    })
-
-    .catch(err => {
-
-        console.log(err);
-
-        resetUI("Mất kết nối server!");
-    });
-}
-
-/* ===== RESET UI ===== */
-
-function resetUI(message){
-
-    document.getElementById("voltage").innerText = "--";
-
-    document.getElementById("current").innerText = "--";
-
-    document.getElementById("power").innerText = "--";
-
-    document.getElementById("energy").innerText = "--";
-
-    document.getElementById("status").innerText = message;
-}
-
-/* ===== LOAD EVERY SECOND ===== */
-
-setInterval(loadData,1000);
-
-loadData();
-
-/* ========================================================= */
-/* ==================== EVN BAR CHART ====================== */
-/* ========================================================= */
-
-let energyChart = null;
-
-/* ===== LOAD CHART ===== */
-
-async function loadEnergyChart(){
-
-    try{
-
-        const response =
-            await fetch('/api/energy-chart/');
-
-        const data =
-            await response.json();
-
-        const ctx =
-            document.getElementById('energyChart');
-
-        if(energyChart){
+          if (energyChart) {
             energyChart.destroy();
-        }
+          }
 
-        /* ===== AUTO MAX ===== */
+          /* ===== AUTO MAX ===== */
 
-        let maxValue = Math.max(...data.values, 0.1);
+          let maxValue = Math.max(...data.values, 0.1);
 
-        energyChart = new Chart(ctx, {
+          energyChart = new Chart(ctx, {
+            type: "bar",
 
-            type:'bar',
+            data: {
+              labels: data.labels,
 
-            data:{
+              datasets: [
+                {
+                  label: "kWh",
 
-                labels:data.labels,
+                  data: data.values,
 
-                datasets:[{
+                  backgroundColor: "#6c63ff",
 
-                    label:'kWh',
+                  borderColor: "#2c2f8f",
 
-                    data:data.values,
+                  borderWidth: 1,
 
-                    backgroundColor:'#6c63ff',
-
-                    borderColor:'#2c2f8f',
-
-                    borderWidth:1,
-
-                    borderRadius:8
-                }]
+                  borderRadius: 8,
+                },
+              ],
             },
 
-            options:{
+            options: {
+              responsive: true,
 
-                responsive:true,
+              animation: {
+                duration: 800,
+              },
 
-                animation:{
-                    duration:800
+              plugins: {
+                legend: {
+                  display: false,
                 },
 
-                plugins:{
-
-                    legend:{
-                        display:false
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return context.raw + " kWh";
                     },
-
-                    tooltip:{
-                        callbacks:{
-                            label:function(context){
-                                return context.raw + ' kWh';
-                            }
-                        }
-                    }
+                  },
                 },
+              },
 
-                scales:{
+              scales: {
+                y: {
+                  beginAtZero: true,
 
-                    y:{
+                  min: 0,
+                  max: 0.05,
 
-                        beginAtZero:true,
+                  ticks: {
+                    stepSize: 0.005,
+                  },
+                },
+              },
+            },
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      }
 
-                        min:0,
-                        max:0.05,
+      /* ===== LOAD CHART ===== */
 
-                        ticks:{
-                            stepSize:0.005
-                        }
-                    }
-                }
-            }
-        });
+      loadEnergyChart();
 
-    }
+      /* ===== UPDATE CHART EVERY 10s ===== */
 
-    catch(err){
-
-        console.log(err);
-    }
-}
-
-/* ===== LOAD CHART ===== */
-
-loadEnergyChart();
-
-/* ===== UPDATE CHART EVERY 10s ===== */
-
-setInterval(loadEnergyChart,10000);
-
-</script>
-
-</body>
+      setInterval(loadEnergyChart, 10000);
+    </script>
+  </body>
 </html>
