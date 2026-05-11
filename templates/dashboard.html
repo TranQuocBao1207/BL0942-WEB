@@ -582,7 +582,7 @@
                 tooltip: {
                   callbacks: {
                     label: function (context) {
-                      return context.raw + " kWh";
+                      return Number(context.raw).toFixed(3) + ' kWh';
                     },
                   },
                 },
