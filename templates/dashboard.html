@@ -522,21 +522,17 @@
 
       async function loadEnergyChart() {
         try {
-          const response = await fetch("/api/energy-chart/");
+          const response = await fetch(
+            `/api/energy-chart/?device_id=${deviceId}`,
+          );
 
           const data = await response.json();
 
-          const deviceId = "{{ selected_device.device_id }}";
-
-          const monthlyTotal = Number(data.monthly_total?.[deviceId] || 0);
-
-          const monthlyCost = Number(data.monthly_cost?.[deviceId] || 0);
-
           document.getElementById("monthEnergy").innerText =
-            monthlyTotal.toFixed(3) + " kWh";
+            Number(data.monthly_total || 0).toFixed(3) + " kWh";
 
           document.getElementById("monthCost").innerText =
-            monthlyCost.toLocaleString("vi-VN") + " VNĐ";
+            Number(data.monthly_cost || 0).toLocaleString("vi-VN") + " VNĐ";
 
           const ctx = document.getElementById("energyChart");
 

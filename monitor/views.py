@@ -295,13 +295,22 @@ def energy_chart_data(request):
 
         return JsonResponse({
             "labels": [],
-            "values": []
+            "values": [],
+            "monthly_total": 0,
+            "monthly_cost": 0
         })
 
     try:
 
+        # gọi Apps Script
         response = requests.get(
-            GOOGLE_SCRIPT_URL + "?device_id=" + device_id,
+
+            GOOGLE_SCRIPT_URL,
+
+            params={
+                "device_id": device_id
+            },
+
             timeout=5
         )
 
@@ -312,7 +321,7 @@ def energy_chart_data(request):
 
         # ===== DỮ LIỆU BIỂU ĐỒ =====
 
-        for item in sheet_data["data"]:
+        for item in sheet_data.get("data", []):
 
             labels.append(item["date"])
 
@@ -325,10 +334,10 @@ def energy_chart_data(request):
             "values": values,
 
             "monthly_total":
-                sheet_data["monthly_total"],
+                sheet_data.get("monthly_total", 0),
 
             "monthly_cost":
-                sheet_data["monthly_cost"]
+                sheet_data.get("monthly_cost", 0)
         })
 
     except Exception as e:
@@ -336,11 +345,9 @@ def energy_chart_data(request):
         return JsonResponse({
 
             "labels": [],
-
             "values": [],
 
             "monthly_total": 0,
-
             "monthly_cost": 0,
 
             "error": str(e)
